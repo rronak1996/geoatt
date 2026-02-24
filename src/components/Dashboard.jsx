@@ -2,10 +2,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const NAV = [
-  { to: '/geoatt/dashboard', icon: '🏠', label: 'Dashboard' },
-  { to: '/geoatt/students', icon: '👥', label: 'Students' },
-  { to: '/geoatt/sessions', icon: '📋', label: 'Sessions' },
-  { to: '/geoatt/reports', icon: '📊', label: 'Reports' },
+  { to: '/dashboard', icon: '🏠', label: 'Dashboard' },
+  { to: '/students', icon: '👥', label: 'Students' },
+  { to: '/sessions', icon: '📋', label: 'Sessions' },
+  { to: '/reports', icon: '📊', label: 'Reports' },
 ]
 
 export default function Dashboard({ user, children }) {
@@ -14,10 +14,10 @@ export default function Dashboard({ user, children }) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    navigate('/geoatt/')
+    navigate('/')
   }
 
-  const isHome = location.pathname === '/geoatt/dashboard'
+  const isHome = location.pathname === '/dashboard'
 
   return (
     <div className="layout">
@@ -64,7 +64,7 @@ export default function Dashboard({ user, children }) {
             </div>
 
             <div className="dash-grid">
-              {NAV.filter(n => n.to !== '/geoatt/dashboard').map(({ to, icon, label }) => (
+              {NAV.filter(n => n.to !== '/dashboard').map(({ to, icon, label }) => (
                 <Link to={to} key={to} className="glass-card dash-card">
                   <span className="dash-icon">{icon}</span>
                   <span className="dash-label">{label}</span>

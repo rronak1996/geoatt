@@ -131,7 +131,7 @@ export default function Scanner({ user }) {
                             </p>
                         )}
                     </div>
-                    <button className="btn btn-secondary" onClick={() => navigate('/geoatt/sessions')}>
+                    <button className="btn btn-secondary" onClick={() => navigate('/sessions')}>
                         ← Back
                     </button>
                 </div>

@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
 import Students from './components/Students'
 import Sessions from './components/Sessions'
-import Scanner from './components/Scanner'
+import QRDisplay from './components/QRDisplay'
 import Reports from './components/Reports'
+import Attend from './components/Attend'
+import Scanner from './components/Scanner'
 
 function ProtectedRoute({ user, children }) {
-    if (!user) return <Navigate to="/geoatt/" replace />
+    if (!user) return <Navigate to="/" replace />
     return children
 }
 
@@ -22,54 +24,36 @@ export default function App() {
             setUser(session?.user ?? null)
             setLoading(false)
         })
-
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null)
         })
-
         return () => subscription.unsubscribe()
     }, [])
 
     if (loading) {
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-                <div className="loading-center">
-                    <div className="spinner"></div>
-                    <span>Initializing…</span>
-                </div>
+                <div className="loading-center"><div className="spinner"></div><span>Initializing…</span></div>
             </div>
         )
     }
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
-                <Route
-                    path="/geoatt/"
-                    element={user ? <Navigate to="/geoatt/dashboard" replace /> : <Login />}
-                />
-                <Route
-                    path="/geoatt/dashboard"
-                    element={<ProtectedRoute user={user}><Dashboard user={user} /></ProtectedRoute>}
-                />
-                <Route
-                    path="/geoatt/students"
-                    element={<ProtectedRoute user={user}><Students user={user} /></ProtectedRoute>}
-                />
-                <Route
-                    path="/geoatt/sessions"
-                    element={<ProtectedRoute user={user}><Sessions user={user} /></ProtectedRoute>}
-                />
-                <Route
-                    path="/geoatt/scanner/:sessionId"
-                    element={<ProtectedRoute user={user}><Scanner user={user} /></ProtectedRoute>}
-                />
-                <Route
-                    path="/geoatt/reports"
-                    element={<ProtectedRoute user={user}><Reports user={user} /></ProtectedRoute>}
-                />
-                <Route path="*" element={<Navigate to="/geoatt/" replace />} />
+                {/* Public Routes */}
+                <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
+                <Route path="/attend" element={<Attend />} />
+
+                {/* Protected Routes — teacher only */}
+                <Route path="/dashboard" element={<ProtectedRoute user={user}><Dashboard user={user} /></ProtectedRoute>} />
+                <Route path="/students" element={<ProtectedRoute user={user}><Students user={user} /></ProtectedRoute>} />
+                <Route path="/sessions" element={<ProtectedRoute user={user}><Sessions user={user} /></ProtectedRoute>} />
+                <Route path="/qr/:sessionId" element={<ProtectedRoute user={user}><QRDisplay user={user} /></ProtectedRoute>} />
+                <Route path="/scanner/:sessionId" element={<ProtectedRoute user={user}><Scanner user={user} /></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute user={user}><Reports user={user} /></ProtectedRoute>} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
